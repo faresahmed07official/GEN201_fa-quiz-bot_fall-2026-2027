@@ -1,0 +1,1948 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>𝙁𝘼ᵀᴹ_GEN201_BOT</title>
+<style>
+  /* =========================================================
+     THEME TOKENS
+  ========================================================= */
+  :root{
+    --bg: #f4f6fb;
+    --surface: #ffffff;
+    --surface-2: #eef1f8;
+    --border: #dde2ee;
+    --text: #1c2333;
+    --text-soft: #5a637a;
+    --text-faint: #8992a8;
+    --primary: #3949ab;
+    --primary-ink: #ffffff;
+    --primary-soft: #e7e9fb;
+    --accent: #0f9d8f;
+    --accent-soft: #dcf5f1;
+    --danger: #d64545;
+    --danger-soft: #fbe4e4;
+    --warn: #c98a1e;
+    --radius-lg: 18px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 1px 2px rgba(28,35,51,.04), 0 8px 24px -8px rgba(28,35,51,.12);
+    --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", system-ui, sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", system-ui, sans-serif;
+  }
+  [data-theme="dark"]{
+    --bg: #10141f;
+    --surface: #181e2c;
+    --surface-2: #1f2637;
+    --border: #2b3346;
+    --text: #e7ebf6;
+    --text-soft: #a3adc6;
+    --text-faint: #6d7791;
+    --primary: #7c8ef0;
+    --primary-ink: #10141f;
+    --primary-soft: #262d47;
+    --accent: #3fd8c4;
+    --accent-soft: #17332f;
+    --danger: #f27979;
+    --danger-soft: #3a1f22;
+    --warn: #e0ac48;
+    --shadow: 0 1px 2px rgba(0,0,0,.2), 0 12px 28px -10px rgba(0,0,0,.55);
+  }
+
+  *,*::before,*::after{ box-sizing: border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding-bottom: env(safe-area-inset-bottom);
+    transition: background .25s ease, color .25s ease;
+  }
+  h1,h2,h3{ font-family: var(--font-display); margin:0; letter-spacing:-0.01em; }
+  p{ margin:0; }
+  button{ font-family: inherit; }
+  input, select, textarea { font-family: inherit; }
+
+  .app-shell{ max-width: 760px; margin: 0 auto; padding: 0 18px 40px; }
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 18px 0 14px;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; min-width:0; }
+  .brand-logo{
+    min-width:58px; height:38px; padding:0 7px; box-sizing:border-box;
+    border-radius:10px; background:var(--primary); color:var(--primary-ink);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:13px; white-space:nowrap; flex-shrink:0; overflow:hidden;
+  }
+  .brand-logo img{ width:100%; height:100%; object-fit:cover; }
+  .brand-name{ font-weight:700; font-size:17px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  .theme-toggle{
+    display:flex; align-items:center; justify-content:center;
+    width:42px; height:42px; border-radius:50%;
+    border:1px solid var(--border); background: var(--surface);
+    color: var(--text); cursor:pointer; flex-shrink:0;
+    box-shadow: var(--shadow);
+  }
+  .theme-toggle:active{ transform: scale(.94); }
+
+  /* ---------- Cards / surfaces ---------- */
+  .card{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    padding: 20px;
+  }
+  .card + .card{ margin-top: 16px; }
+  .section-title{ font-size: 13px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color: var(--text-soft); margin-bottom:10px; }
+  .hint{ font-size:13px; color: var(--text-faint); margin-top:6px; }
+
+  /* ---------- Home screen ---------- */
+  .hero{ text-align:center; padding: 8px 4px 4px; }
+  .hero h1{ font-size: 26px; }
+  .hero p{
+    color: var(--text-soft);
+    margin-top:6px;
+    font-size:14.5px;
+    white-space: pre-line;
+}
+  .bank-stat{
+    display:inline-flex; align-items:center; gap:8px; margin-top:14px;
+    background: var(--primary-soft); color: var(--primary);
+    padding:8px 14px; border-radius: 999px; font-weight:600; font-size:13.5px;
+  }
+
+  .option-grid{ display:flex; flex-wrap:wrap; gap:8px; }
+  .chip{
+    border:1px solid var(--border); background: var(--surface-2);
+    color: var(--text); padding:10px 16px; border-radius: 999px;
+    font-size:14px; font-weight:600; cursor:pointer; user-select:none;
+    transition: background .15s ease, border-color .15s ease, color .15s ease;
+  }
+  .chip.active{ background: var(--primary); border-color: var(--primary); color: var(--primary-ink); }
+  .chip:active{ transform: scale(.97); }
+
+  .custom-row{ display:flex; gap:8px; margin-top:10px; align-items:center; }
+  .num-input{
+    width:100%; padding:11px 14px; border-radius: var(--radius-md);
+    border:1px solid var(--border); background: var(--surface-2); color: var(--text);
+    font-size:15px;
+  }
+  .num-input:focus, select:focus{ outline: 2px solid var(--primary); outline-offset: 1px; }
+
+  .toggle-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 12px 2px;
+  }
+  .toggle-row + .toggle-row{ border-top: 1px solid var(--border); }
+  .toggle-label{ font-size:14.5px; font-weight:600; }
+  .toggle-sub{ font-size:12.5px; color: var(--text-faint); margin-top:2px; }
+
+  .switch{ position:relative; width:46px; height:27px; flex-shrink:0; }
+  .switch input{ opacity:0; width:100%; height:100%; margin:0; position:absolute; cursor:pointer; z-index:1; }
+  .switch .track{
+    position:absolute; inset:0; background: var(--border); border-radius:999px; transition:.2s;
+  }
+  .switch .thumb{
+    position:absolute; top:3px; left:3px; width:21px; height:21px; border-radius:50%;
+    background:#fff; box-shadow: 0 1px 3px rgba(0,0,0,.3); transition:.2s;
+  }
+  .switch input:checked ~ .track{ background: var(--primary); }
+  .switch input:checked ~ .thumb{ transform: translateX(19px); }
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    padding: 13px 20px; border-radius: var(--radius-md); border:none;
+    font-weight:700; font-size:15px; cursor:pointer; width:100%;
+    transition: transform .1s ease, opacity .15s ease;
+  }
+  .btn:active{ transform: scale(.98); }
+  .btn-primary{ background: var(--primary); color: var(--primary-ink); }
+  .btn-secondary{ background: var(--surface-2); color: var(--text); border:1px solid var(--border); }
+  .btn-ghost{ background: transparent; color: var(--primary); }
+  .btn-danger-outline{ background: transparent; color: var(--danger); border:1px solid var(--danger); }
+  .btn[disabled]{ opacity:.5; cursor:not-allowed; }
+  .btn-row{ display:flex; gap:10px; }
+  .btn-row .btn{ flex:1; }
+
+  /* ---------- Search / Bank review ---------- */
+  .search-input-wrap{ position:relative; }
+  .search-input{
+    width:100%; padding: 12px 14px 12px 40px; border-radius: var(--radius-md);
+    border:1px solid var(--border); background: var(--surface-2); color: var(--text); font-size:15px;
+  }
+  .search-icon{ position:absolute; left:13px; top:50%; transform:translateY(-50%); color: var(--text-faint); }
+  .search-results{ margin-top:12px; max-height: 460px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; }
+  .bank-item{
+    border:1px solid var(--border); border-radius: var(--radius-md); padding:14px;
+    background: var(--surface-2);
+  }
+  .bank-item-header{ display:flex; align-items:flex-start; gap:10px; }
+  .question-number{
+    width:30px; min-width:30px; height:30px; flex:0 0 30px; margin-top:1px;
+    display:flex; align-items:center; justify-content:center;
+    border:1px solid var(--border); border-radius:9px;
+    background:var(--surface); color:var(--primary);
+    font-size:13px; line-height:1; font-weight:800;
+  }
+  .bank-item-text{ font-size:14px; font-weight:700; line-height:1.4; unicode-bidi: plaintext; }
+  .bank-item .options-list{ margin-top:10px; }
+  .bank-item .option-btn{ cursor:default; padding:10px 12px; font-size:13.5px; }
+  .search-empty{ text-align:center; color: var(--text-faint); font-size:13.5px; padding: 14px 0; }
+  .selected-bar{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-top:10px; font-size:13px; color: var(--text-soft);
+  }
+
+  /* ---------- Quiz screen ---------- */
+  .quiz-header{
+    display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom: 14px;
+  }
+  .q-counter{ font-size:13.5px; font-weight:700; color: var(--text-soft); }
+  .timer-pill{
+    display:flex; align-items:center; gap:6px; font-weight:700; font-size:14px;
+    background: var(--surface-2); border:1px solid var(--border); padding:7px 13px; border-radius:999px;
+  }
+  .timer-pill.low{ background: var(--danger-soft); color: var(--danger); border-color: transparent; }
+
+  .progress-track{ height:6px; background: var(--surface-2); border-radius:999px; overflow:hidden; margin-bottom:18px; }
+  .progress-fill{ height:100%; background: var(--primary); border-radius:999px; transition: width .25s ease; }
+
+  .question-text{ font-size:18px; font-weight:700; line-height:1.5; margin-bottom:18px; unicode-bidi: plaintext; }
+
+  .options-list{ display:flex; flex-direction:column; gap:10px; }
+  .option-btn{
+    display:flex; align-items:center; gap:12px; width:100%; text-align:left;
+    padding:14px 16px; border-radius: var(--radius-md); border:1.5px solid var(--border);
+    background: var(--surface-2); color: var(--text); font-size:15px; cursor:pointer;
+    unicode-bidi: plaintext;
+  }
+  .option-btn .letter{
+    flex-shrink:0; width:28px; height:28px; border-radius:50%; border:1.5px solid var(--border);
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; color: var(--text-soft);
+  }
+  .option-btn.selected{ border-color: var(--primary); background: var(--primary-soft); }
+  .option-btn.selected .letter{ background: var(--primary); border-color: var(--primary); color: var(--primary-ink); }
+  .option-btn:active{ transform: scale(.99); }
+  .option-btn:disabled{ cursor:default; }
+
+  .review-option.correct{ border-color: var(--accent); background: var(--accent-soft); }
+  .review-option.wrong{ border-color: var(--danger); background: var(--danger-soft); }
+  .review-tag{ margin-left:auto; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.04em; flex-shrink:0; }
+  .review-tag.correct{ color: var(--accent); }
+  .review-tag.wrong{ color: var(--danger); }
+
+  .feedback-banner{
+    margin-top:14px; padding:12px 14px; border-radius: var(--radius-md);
+    font-weight:700; font-size:14px; line-height:1.4; unicode-bidi: plaintext;
+  }
+  .feedback-banner.correct{ background: var(--accent-soft); color: var(--accent); }
+  .feedback-banner.wrong{ background: var(--danger-soft); color: var(--danger); }
+
+  .nav-row{ display:flex; gap:10px; margin-top:20px; }
+  .nav-row .btn{ flex:1; }
+
+  .navigator{ display:flex; flex-wrap:wrap; gap:7px; margin-top:16px; }
+  .nav-dot{
+    width:34px; height:34px; border-radius:9px; border:1.5px solid var(--border);
+    background: var(--surface-2); color: var(--text-soft); font-size:12.5px; font-weight:700;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .nav-dot.answered{ background: var(--primary-soft); border-color: var(--primary); color: var(--primary); }
+  .nav-dot.current{ outline: 2px solid var(--primary); outline-offset:2px; }
+
+  /* ---------- Result screen ---------- */
+  .result-hero{ text-align:center; padding: 6px 4px 10px; }
+  .ring-wrap{ position:relative; width:168px; height:168px; margin: 6px auto 4px; }
+  .ring-score{
+    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  }
+  .ring-score .pct{ font-size:34px; font-weight:800; font-family: var(--font-display); }
+  .ring-score .lbl{ font-size:12.5px; color: var(--text-faint); font-weight:600; letter-spacing:.03em; }
+
+  .stat-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap:10px; margin-top:18px; }
+  .stat-box{ background: var(--surface-2); border-radius: var(--radius-md); padding:14px 8px; text-align:center; }
+  .stat-box .num{ font-size:20px; font-weight:800; }
+  .stat-box .lbl{ font-size:11.5px; color: var(--text-faint); margin-top:2px; font-weight:600; text-transform:uppercase; letter-spacing:.03em; }
+  .stat-box.correct .num{ color: var(--accent); }
+  .stat-box.wrong .num{ color: var(--danger); }
+  .stat-box.unanswered .num{ color: var(--warn); }
+
+  /* ---------- Footer ---------- */
+  .site-footer{ text-align:center; margin-top: 26px; padding: 10px 0 4px; }
+  .site-footer .author{ font-size:11.5px; color: var(--text-faint); letter-spacing:.02em; }
+  .site-footer .title{
+    font-size:10.5px;
+    color: var(--text-faint);
+    opacity:.75;
+    margin-top:2px;
+    white-space: pre-line;
+    line-height: 1.6;
+}
+
+  .screen{ display:none; }
+  .screen.active{ display:block; animation: fadeIn .2s ease; }
+  @keyframes fadeIn{ from{ opacity:0; transform: translateY(4px);} to{ opacity:1; transform:none; } }
+
+  .banner{
+    display:flex; align-items:center; gap:10px; background: var(--accent-soft); color: var(--accent);
+    border-radius: var(--radius-md); padding: 12px 14px; font-size:13.5px; font-weight:600; margin-bottom:14px;
+  }
+
+  @media (max-width: 420px){
+    .stat-grid{ gap:8px; }
+    .ring-wrap{ width:150px; height:150px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-logo" id="brandLogo">Q</div>
+      <div class="brand-name" id="brandName">Quiz Bot</div>
+    </div>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+      <svg id="themeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+    </button>
+  </div>
+
+  <!-- ============================================================
+       SCREEN: HOME
+  ============================================================= -->
+  <div class="screen active" id="screen-home">
+
+    <div class="card hero">
+      <h1 id="homeTitle">Quiz Bot</h1>
+      <p id="homeSubtitle">Test your knowledge — set your options and start.</p>
+      <div class="bank-stat" id="bankStat">0 questions loaded</div>
+    </div>
+
+    <div id="resumeBanner" style="display:none" class="card">
+      <div class="banner" style="margin-bottom:10px;">You have an unfinished quiz in progress.</div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="btnResume">Resume Quiz</button>
+        <button class="btn btn-secondary" id="btnDiscardResume">Discard</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Question Sections</div>
+      <div class="option-grid" id="sectionChips"></div>
+      <p class="hint" id="sectionHint">Choose Full Bank or one or more sections. All questions in the selected sections will be included.</p>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Quiz Options</div>
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Shuffle Questions</div>
+          <div class="toggle-sub">Randomize question order each attempt</div>
+        </div>
+        <label class="switch"><input type="checkbox" id="toggleShuffleQ"><span class="track"></span><span class="thumb"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Shuffle Answers</div>
+          <div class="toggle-sub">Randomize option order per question</div>
+        </div>
+        <label class="switch"><input type="checkbox" id="toggleShuffleA"><span class="track"></span><span class="thumb"></span></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Quiz Timer</div>
+      <div class="option-grid" id="timerChips"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Question Bank Review</div>
+      <p class="hint" style="margin:-2px 0 12px;">Browse questions from the selected section(s), with the correct answer highlighted. Question numbering restarts from 1 whenever the visible section selection changes.</p>
+      <div class="search-input-wrap">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="search-input" id="searchInput" placeholder="Search by keyword…">
+      </div>
+      <div class="search-results" id="searchResults"></div>
+    </div>
+
+    <button class="btn btn-primary" id="btnStart" style="margin-top:6px;">Start Quiz</button>
+
+    <div class="site-footer">
+      <div class="author" id="footerAuthor"></div>
+      <div class="title" id="footerTitle"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCREEN: QUIZ
+  ============================================================= -->
+  <div class="screen" id="screen-quiz">
+    <div class="card">
+      <div class="quiz-header">
+        <div class="q-counter" id="qCounter">Question 1 of 10</div>
+        <div class="timer-pill" id="timerPill" style="display:none">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+          <span id="timerText">00:00</span>
+        </div>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="question-text" id="questionText"></div>
+      <div class="options-list" id="optionsList"></div>
+      <div class="feedback-banner" id="feedbackBanner" style="display:none"></div>
+      <div class="nav-row">
+        <button class="btn btn-secondary" id="btnPrev">Previous</button>
+        <button class="btn btn-primary" id="btnNext">Next Question</button>
+      </div>
+      <div class="navigator" id="navigator"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCREEN: RESULT
+  ============================================================= -->
+  <div class="screen" id="screen-result">
+    <div class="card result-hero">
+      <h1>Quiz Completed!</h1>
+      <div class="ring-wrap">
+        <svg width="168" height="168" viewBox="0 0 168 168">
+          <circle cx="84" cy="84" r="74" fill="none" stroke="var(--surface-2)" stroke-width="14"/>
+          <circle id="ringProgress" cx="84" cy="84" r="74" fill="none" stroke="var(--primary)" stroke-width="14" stroke-linecap="round" stroke-dasharray="465" stroke-dashoffset="465" transform="rotate(-90 84 84)"/>
+        </svg>
+        <div class="ring-score">
+          <div class="pct" id="scorePct">0%</div>
+          <div class="lbl" id="scoreFrac">0 / 0</div>
+        </div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-box correct"><div class="num" id="statCorrect">0</div><div class="lbl">Correct</div></div>
+        <div class="stat-box wrong"><div class="num" id="statWrong">0</div><div class="lbl">Wrong</div></div>
+        <div class="stat-box unanswered"><div class="num" id="statUnanswered">0</div><div class="lbl">Unanswered</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="btn-row">
+        <button class="btn btn-secondary" id="btnReview">Review Answers</button>
+        <button class="btn btn-primary" id="btnRetry">Retry Quiz</button>
+      </div>
+      <button class="btn btn-ghost" id="btnHome" style="margin-top:10px;">Back to Home</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCREEN: REVIEW
+  ============================================================= -->
+  <div class="screen" id="screen-review">
+    <div class="card">
+      <h1 style="font-size:20px;margin-bottom:14px;">Review Answers</h1>
+      <div id="reviewList"></div>
+      <button class="btn btn-primary" id="btnBackToResult" style="margin-top:6px;">Back to Result</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* =====================================================================
+   SITE CONFIGURATION
+   Edit anything in this object to rebrand or reconfigure the site.
+   Nothing else in the code needs to change.
+===================================================================== */
+const SITE_CONFIG = {
+  siteName: "QUIZ BOT",
+  // Logo: put a short text (e.g. initials) OR an image URL below.
+  // If logoImageUrl is set (non-empty), it is used instead of logoText.
+  logoText: "𝙁𝘼ᵀᴹ",
+  logoImageUrl: "", // e.g. "https://yourdomain.com/logo.png" or a base64 data URI
+
+  authorName: "Powered by: Eng: Fares Ahmed Ramzy Helail",
+  authorTitle: 'ᴇɴɢ | "ɢᴇɴᴇʀᴀʟ - ᴍᴇᴄ" ʟᴇᴀᴅᴇʀ\n01201941328',
+
+  defaultTheme: "light", // "light" or "dark" (used only if user has no saved preference)
+
+  homeTitle: "𝙁𝘼ᵀᴹ_GEN201_BOT",
+  homeSubtitle: "Dr: Abd El Rahman Elsayed Eladl Elsayed\nDr: Reham Mohamed Abd El Aty Abd El Azim El Taify\nDr: Nermin Ahmed Ebrahim Gomaa\nFall 2026 - 2027",
+
+  // Options offered on the home screen
+  timerOptionsMinutes: [0, 5, 10, 15, 20, 30, 45, 60], // 0 = "No Timer"
+
+  // Defaults pre-selected on first load
+  defaultTimerMinutes: 0,
+  defaultShuffleQuestions: true,
+  defaultShuffleAnswers: false
+};
+
+/* =====================================================================
+   QUESTION BANK
+   -------------------------------------------------------------------
+   EDIT THIS SECTION ONLY to add or remove questions.
+   Nothing else in the code needs to change — the app automatically
+   adapts to any number of questions, and to any number of options.
+
+   FORMAT — plain text, easy to paste from Excel or type by hand:
+
+   Section: Fire Safety
+
+   Question 1:
+   Question text here?
+   A. First choice
+   B. Second choice
+   C. Third choice
+   D. Fourth choice
+   Answer: A
+
+   Question 2:
+   Second question text?
+   A. First choice
+   B. Second choice
+   Answer: B
+
+   RULES:
+   - Start each group with a line "Section: Section Name".
+   - All questions after a Section line belong to that section until another Section line appears.
+   - The app automatically creates the section buttons from the Section lines in the bank.
+   - Use "Full Bank" in the app to include every question.
+   - You can select one section or multiple sections at the same time.
+   - Start every question with a line "Question <number>:" (the number
+     itself is not used by the app — it's just a separator for you).
+   - Then the question text on the next line.
+   - Then one option per line, formatted as "A. text", "B. text", etc.
+   - You are NOT limited to four options — add "E.", "F." and so on if
+     a question needs more choices; the app renders however many you give it.
+   - For a True/False question, just give two options:
+       A. True
+       B. False
+   - If a question only has two real options, simply do not write a
+     "C." or "D." line at all — do not leave them empty. Any option line
+     left blank (e.g. "C.") is automatically ignored too, so nothing
+     ever shows an empty choice.
+   - End every question with "Answer: <letter>" matching one of the
+     option letters you used above.
+   - Leave a blank line between questions (optional, just for readability).
+
+   EXCEL WORKFLOW:
+   If your Excel sheet has columns Question | A | B | C | D | Answer,
+   build one text block per row following the pattern above (a simple
+   Excel formula with CONCAT/TEXTJOIN can generate this block per row),
+   then paste all the blocks below, one after another.
+===================================================================== */
+const QUESTION_BANK_TEXT = `
+Section: Report Structure - Primary Pages
+
+Section: 01- Report Structure - Primary Pages
+
+Question 1:
+1- Abstract is an optional item in the primary page
+A. TRUE
+B. FALSE
+C. 
+D. 
+E. 
+Answer: B
+
+Section: 01- Report Structure - Primary Pages
+
+Question 2:
+2- the title is the most important item in the cover page
+A. TRUE
+B. FALSE
+C. 
+D. 
+E. 
+Answer: A
+
+Section: 01- Report Structure - Primary Pages
+
+Question 3:
+11- there is no difference between observation and test
+A. TRUE
+B. FALSE
+C. 
+D. 
+E. 
+Answer: B
+
+Section: 01- Report Structure - Primary Pages
+
+Question 4:
+12- The data of the questionnaire is quantitative
+A. TRUE
+B. FALSE
+C. 
+D. 
+E. 
+Answer: A
+
+Section: 01- Report Structure - Primary Pages
+
+Question 5:
+13- the experiment is used in descriptive studies
+A. TRUE
+B. FALSE
+C. 
+D. 
+E. 
+Answer: B
+
+Section: 01- Report Structure - Primary Pages
+
+Question 6:
+14- the researcher hive his attitude and recommendation in the conclusion
+A. TRUE
+B. FALSE
+C. 
+D. 
+E. 
+Answer: A
+
+Section: 01- Report Structure - Primary Pages
+
+Question 7:
+15- acknowledgment is an optional page
+A. TRUE
+B. FALSE
+C. 
+D. 
+E. 
+Answer: A
+
+Section: 01- Report Structure - Primary Pages
+
+Question 8:
+16- there is no limit to the words of the abstract
+A. TRUE
+B. FALSE
+C. 
+D. 
+E. 
+Answer: B
+
+Section: 01- Report Structure - Primary Pages
+
+Question 9:
+18- abstract is  written   to provide a summary of the report’s essential information.
+A. TRUE
+B. FALSE
+C. 
+D. 
+E. 
+Answer: A
+
+Section: 01- Report Structure - Primary Pages
+
+Question 10:
+19- The abstract should appear on a separate page after the title page, and it is usually about 100–200 words in length.
+A. TRUE
+B. FALSE
+C. 
+D. 
+E. 
+Answer: A
+
+Section: 01- Report Structure - Primary Pages
+
+Question 11:
+20- An effective report has clear objectives and presents information in a logical sequence. 
+A. TRUE
+B. FALSE
+C. 
+D. 
+E. 
+Answer: A
+
+Section: 01- Report Structure - Primary Pages
+
+Question 12:
+27- defining terms are placed on the primary pages
+A. TRUE
+B. FALSE
+C. 
+D. 
+E. 
+Answer: B
+
+Section: 01- Report Structure - Primary Pages
+
+Question 13:
+Charts, designs, photos or graphs are placed in a list called……………
+A. List of tables
+B. List of figures 
+C. Appendix
+D. Reference
+E. 
+Answer: B
+
+Section: 01- Report Structure - Primary Pages
+
+Question 14:
+Technical reports are based mainly on... 
+A. data 
+B. organization
+C. experience
+D. theories 
+E. 
+Answer: C
+
+Section: 01- Report Structure - Primary Pages
+
+Question 15:
+……a part of the report, which provide clear summary and discussion of results.
+A. Abstract
+B. Introduction      
+C.  Importance 
+D. Conclusion
+E. 
+Answer: A
+
+Section: 01- Report Structure - Primary Pages
+
+Question 16:
+The most important part in the writing process is the……..
+A. reader   
+B. message
+C. writer       
+D. style 
+E. 
+Answer: A
+
+Section: 01- Report Structure - Primary Pages
+
+Question 17:
+The purpose of the study is to examine the nature of chronicle diseases (               ) 
+A. Definition  
+B. Reference
+C. Limits 
+D. Aim
+E. 
+Answer: D
+
+Section: 01- Report Structure - Primary Pages
+
+Question 18:
+List of tables in a report should be listed in a page placed on …………… 
+A. Abstract
+B. appendix
+C. reference 
+D. Primary pages 
+E. 
+Answer: D
+
+Section: 01- Report Structure - Primary Pages
+
+Question 19:
+My best regards for everyone helped me
+A. Acknowledgment
+B. aim
+C. Importance
+D. Definition 
+E. 
+Answer: A
+
+Section: 01- Report Structure - Primary Pages
+
+Question 20:
+study is submitted to finish the graduation project  
+A. Definition  
+B. Reference
+C. Limits 
+D. Aim
+E. 
+Answer: D
+
+Section: 01- Report Structure - Primary Pages
+
+Question 21:
+List of tables in a report should be listed in a page placed on …………… 
+A. List of tables
+B. List of figures 
+C. Appendix
+D. Reference
+E. 
+Answer: A
+
+Section: 01- Report Structure - Primary Pages
+
+Question 22:
+The tables which are used in a report should be listed in a page called
+A. table of contents
+B. appendix
+C. list of tables 
+D. list of figures
+E. 
+Answer: C
+
+Section: 01- Report Structure - Primary Pages
+
+Question 23:
+The author  name should be in the ……….of the report.
+A. Title Page 
+B. Reference
+C. Footnote       
+D. last page 
+E. 
+Answer: A
+
+Section: 01- Report Structure - Primary Pages
+
+Question 24:
+……….should only be a few sentences long 
+A. Headings 
+B. Titles
+C. Abstracts 
+D. Memos
+E. 
+Answer: C
+
+Section: 01- Report Structure - Primary Pages
+
+Question 25:
+……….presents information in columns and rows.
+A. Tables 
+B. Charts
+C. Illustrations 
+D. Line drawings
+E. 
+Answer: A
+
+Section: 01- Report Structure - Primary Pages
+
+Question 26:
+the title should contain at least one topic and a …..
+A. Tool 
+B. figure
+C. aim
+D. subject
+E. 
+Answer: D
+
+Section: 01- Report Structure - Primary Pages
+
+Question 27:
+acknowledgment is a-an…...page
+A. long
+B. additional
+C. optional
+D. basic
+E. 
+Answer: C
+
+Section: 02- Report Structure - The body of report
+
+Question 28:
+21- Headings and subheadings should divide the report into well-defined sections.
+A. TRUE
+B. FALSE
+C. 
+D. 
+E. 
+Answer: A
+
+Section: 02- Report Structure - The body of report
+
+Question 29:
+24- The conclusion(s) of a report must be related to, and resulting from, the material which appears in the report.
+A. TRUE
+B. FALSE
+C. 
+D. 
+E. 
+Answer: A
+
+Section: 02- Report Structure - The body of report
+
+Question 30:
+Statement of the problem of a report must be written in…………… 
+A. Title page 
+B. Introduction
+C. Abstract
+D. Conclusion
+E. 
+Answer: B
+
+Section: 02- Report Structure - The body of report
+
+Question 31:
+Limits of a report must be written in…………… 
+A. Title page 
+B. Introduction
+C. Abstract
+D. Conclusion
+E. 
+Answer: B
+
+Section: 02- Report Structure - The body of report
+
+Question 32:
+Gold is a solid material used in different ways. (It is…)
+A. Tool 
+B. Limits 
+C. Aim
+D. Definition  
+E. 
+Answer: D
+
+Section: 02- Report Structure - The body of report
+
+Question 33:
+A questionnaire is distributed among the students to collect data. (               )
+A. Tool 
+B. Limits 
+C. Aim
+D. Definition  
+E. 
+Answer: A
+
+Section: 02- Report Structure - The body of report
+
+Question 34:
+The study is started in November 2018. (                ) 
+A. Tool 
+B. Limits 
+C. Aim
+D. Definition  
+E. 
+Answer: B
+
+Section: 02- Report Structure - The body of report
+
+Question 35:
+Importance of a report must be written in…………… 
+A. Title page 
+B. Introduction
+C. Abstract
+D. Conclusion
+E. 
+Answer: B
+
+Section: 02- Report Structure - The body of report
+
+Question 36:
+this report may be useful for the government for......    
+A. Acknowledgment
+B. aim
+C. Importance
+D. Definition 
+E. 
+Answer: C
+
+Section: 02- Report Structure - The body of report
+
+Question 37:
+Iron is a solid material used in different ways
+A. Tool 
+B. Limits 
+C. Aim
+D. Definition  
+E. 
+Answer: D
+
+Section: 02- Report Structure - The body of report
+
+Question 38:
+duration of this study is 3 months in a coastal area. 
+A. Tool 
+B. Limits 
+C. Aim
+D. Definition  
+E. 
+Answer: B
+
+Section: 02- Report Structure - The body of report
+
+Question 39:
+Recommendation of a report is placed on……………
+A. cover page
+B. introduction      
+C. Abstract
+D. Conclusion
+E. 
+Answer: D
+
+Section: 02- Report Structure - The body of report
+
+Question 40:
+Informative reports written in ……………style.
+A. A descriptive
+B. A comparative
+C. An instructive 
+D. An Experimental
+E. 
+Answer: A
+
+Section: 02- Report Structure - The body of report
+
+Question 41:
+This kind of report which is based mainly on guidance and helping instructs .
+A. Informative 
+B. Lab Research
+C. Manuals
+D. Feasibility
+E. 
+Answer: C
+
+Section: 02- Report Structure - The body of report
+
+Question 42:
+The content of reports are divided into…………… 
+A. Sections 
+B. Units
+C. Chapters     
+D. Stages 
+E. 
+Answer: C
+
+Section: 02- Report Structure - The body of report
+
+Question 43:
+This report is focusing on studying the nature of chronicle diseases (               ) 
+A. Acknowledgment
+B. topic
+C. Importance
+D. Definition 
+E. 
+Answer: B
+
+Section: 02- Report Structure - The body of report
+
+Question 44:
+This tool is used for measuring the behaviors. 
+A. Survey
+B. interview                         
+C. Case study 
+D. Questionnaire
+E. 
+Answer: B
+
+Section: 02- Report Structure - The body of report
+
+Question 45:
+is an instrument, has been described as an oral questionnaire
+A. Survey
+B. interview                         
+C. Case study 
+D. Questionnaire
+E. 
+Answer: B
+
+Section: 02- Report Structure - The body of report
+
+Question 46:
+The data in basic  Research …..
+A. qualitative 
+B. raw 
+C. statistics        
+D. quantitative 
+E. 
+Answer: A
+
+Section: 02- Report Structure - The body of report
+
+Question 47:
+Abstract is consisted of aim, tool and….
+A. topic
+B. introduction
+C. Importance
+D. result
+E. 
+Answer: D
+
+Section: 02- Report Structure - The body of report
+
+Question 48:
+You must define the terms of your research in…
+A. Title page 
+B. Introduction
+C. Abstract
+D. Conclusion
+E. 
+Answer: B
+
+Section: 02- Report Structure - The body of report
+
+Question 49:
+the researcher specified the time, place, and point of the research in…..
+A. Abstract
+B. importance
+C. Conclusion
+D. limits
+E. 
+Answer: D
+
+Section: 02- Report Structure - The body of report
+
+Question 50:
+pollution affects on our society. (this sentence is a….)
+A. profile
+B. title
+C. acknowledgment
+D. aim
+E. 
+Answer: A
+
+Section: 02- Report Structure - The body of report
+
+Question 51:
+the title of research chapters are called….
+A. Headings 
+B. signs
+C. points
+D. items
+E. 
+Answer: A
+
+Section: 03- Report Structure - Back Pages
+
+Question 52:
+10- Books and internet sites are tools.
+A. TRUE
+B. FALSE
+C. 
+D. 
+E. 
+Answer: B
+
+Section: 03- Report Structure - Back Pages
+
+Question 53:
+Howard R. (2005): Professional English in Use, Cambridge, University Press. (              )
+A. Definition  
+B. Reference
+C. Limits 
+D. Aim
+E. 
+Answer: B
+
+Section: 03- Report Structure - Back Pages
+
+Question 54:
+Results of a report are placed  on……………
+A. cover page 
+B. introduction
+C. references
+D. conclusion
+E. 
+Answer: D
+
+Section: 03- Report Structure - Back Pages
+
+Question 55:
+The general attitude of the author is placed on……………
+A. Cover page 
+B. introduction
+C. references
+D. conclusion
+E. 
+Answer: D
+
+Section: 03- Report Structure - Back Pages
+
+Question 56:
+……are supplements to the report, include material which is incidental to the report.
+A. Abstract
+B. appendix
+C. reference 
+D. Primary pages 
+E. 
+Answer: B
+
+Section: 03- Report Structure - Back Pages
+
+Question 57:
+The resources  of a report is placed  on……………
+A. cover page 
+B. introduction
+C. references
+D. conclusion
+E. 
+Answer: C
+
+Section: 03- Report Structure - Back Pages
+
+Question 58:
+The outcomes and results of your report should be placed in the ……….
+A. Conclusion
+B. Heading
+C. Reference
+D. Illustration
+E. 
+Answer: A
+
+Section: 03- Report Structure - Back Pages
+
+Question 59:
+The data in applied Research are…..
+A. qualitative 
+B. raw 
+C. statistics        
+D. quantitative 
+E. 
+Answer: D
+
+Section: 03- Report Structure - Back Pages
+
+Question 60:
+the reference must begin with….
+A. date
+B. author name
+C. title
+D. city
+E. 
+Answer: B
+
+Section: 03- Report Structure - Back Pages
+
+Question 61:
+(et.al) is a latin word means….
+A. others
+B. author
+C. career
+D. organisation
+E. 
+Answer: A
+
+Section: 04- Presentation - introducing strategies
+
+Question 62:
+17- you should speak in a neuteral tone in a presentation
+A. TRUE
+B. FALSE
+C. 
+D. 
+E. 
+Answer: B
+
+Section: 04- Presentation - introducing strategies
+
+Question 63:
+22- A reference list must appear at the end of a report, listing all sources that have been referred to in the text.
+A. TRUE
+B. FALSE
+C. 
+D. 
+E. 
+Answer: A
+
+Section: 04- Presentation - introducing strategies
+
+Question 64:
+23- a presentation may be lasted to 30 minutes
+A. TRUE
+B. FALSE
+C. 
+D. 
+E. 
+Answer: B
+
+Section: 04- Presentation - introducing strategies
+
+Question 65:
+25- you should not move while presenting
+A. TRUE
+B. FALSE
+C. 
+D. 
+E. 
+Answer: B
+
+Section: 04- Presentation - introducing strategies
+
+Question 66:
+26- telling a story is a strategy of starting a presentation
+A. TRUE
+B. FALSE
+C. 
+D. 
+E. 
+Answer: A
+
+Section: 04- Presentation - introducing strategies
+
+Question 67:
+The maximum duration of a good presentation is
+A. 10 minutes 
+B. 15 minutes
+C. 20 minutes
+D. 30 minute
+E. 
+Answer: B
+
+Section: 05- Presentation - visual aids
+
+Question 68:
+Data show is a kind of…
+A. resources
+B. visual aids
+C. figures
+D. tools
+E. 
+Answer: B
+
+Section: 06- Presentation - during and coclusion
+
+Question 69:
+The movement is important for the presentation because it adds
+A. contact
+B. trust
+C. life
+D. respect
+E. 
+Answer: C
+
+Section: 06- Presentation - during and coclusion
+
+Question 70:
+Eye contact give ….for the listener 
+A. understand
+B. attention
+C. trust
+D. importance
+E. 
+Answer: D
+
+
+
+
+`;
+
+/* =====================================================================
+   APP LOGIC — you should not need to edit anything below this line.
+===================================================================== */
+(function(){
+
+  const STORAGE_THEME_KEY = "quizbot-theme";
+  const STORAGE_SESSION_KEY = "quizbot-session";
+
+  /* ---------------- Parsing & validation ---------------- */
+  const QUESTION_HEADER_RE = /^Question\s*\d+\s*:?\s*$/i;
+  const SECTION_LINE_RE = /^Section\s*:\s*(.+?)\s*$/i;
+  const OPTION_LINE_RE = /^([A-Za-z])[\.\)]\s*(.*)$/;
+  const ANSWER_LINE_RE = /^Answer\s*:\s*([A-Za-z])\s*$/i;
+
+  function parseQuestionBankText(text){
+    const lines = String(text || "").split(/\r?\n/);
+    const blocks = [];
+    let current = null;
+    let currentSection = "General";
+
+    for(const rawLine of lines){
+      const line = rawLine.trim();
+      if(!line) continue;
+
+      const sectionMatch = line.match(SECTION_LINE_RE);
+      if(sectionMatch){
+        currentSection = sectionMatch[1].trim();
+        continue;
+      }
+
+      if(QUESTION_HEADER_RE.test(line)){
+        if(current) blocks.push(current);
+        current = { questionLines: [], options: [], answerLetter: null, section: currentSection };
+        continue;
+      }
+      if(!current) continue; // ignore stray text before the first question header
+
+      const ansMatch = line.match(ANSWER_LINE_RE);
+      if(ansMatch){
+        current.answerLetter = ansMatch[1].toUpperCase();
+        continue;
+      }
+      const optMatch = line.match(OPTION_LINE_RE);
+      if(optMatch){
+        const letter = optMatch[1].toUpperCase();
+        const optText = optMatch[2].trim();
+        if(optText.length > 0){
+          current.options.push({ letter, text: optText });
+        }
+        // an option line with no text after the letter is silently skipped
+        continue;
+      }
+      // otherwise treat this as (a continuation of) the question text,
+      // but only before any options have started
+      if(current.options.length === 0 && current.answerLetter === null){
+        current.questionLines.push(line);
+      }
+    }
+    if(current) blocks.push(current);
+    return blocks;
+  }
+
+  function normalizeParsedQuestion(block, idx){
+    try{
+      const questionText = block.questionLines.join(" ").trim();
+      if(!questionText){
+        console.warn(`[QuizBot] Question #${idx+1} skipped: missing question text.`);
+        return null;
+      }
+      if(block.options.length < 2){
+        console.warn(`[QuizBot] Question #${idx+1} skipped: fewer than 2 usable options.`);
+        return null;
+      }
+      if(!block.answerLetter){
+        console.warn(`[QuizBot] Question #${idx+1} skipped: missing "Answer:" line.`);
+        return null;
+      }
+      const correctIndex = block.options.findIndex(o=>o.letter===block.answerLetter);
+      if(correctIndex === -1){
+        console.warn(`[QuizBot] Question #${idx+1} skipped: answer letter "${block.answerLetter}" does not match any option.`);
+        return null;
+      }
+      return {
+        id: idx,
+        section: block.section || "General",
+        question: questionText,
+        options: block.options.map(o=>o.text),
+        correctIndex
+      };
+    }catch(e){
+      console.warn(`[QuizBot] Question #${idx+1} skipped due to an error:`, e);
+      return null;
+    }
+  }
+
+  const VALID_QUESTIONS = parseQuestionBankText(QUESTION_BANK_TEXT)
+    .map(normalizeParsedQuestion)
+    .filter(Boolean);
+
+  /* ---------------- Helpers ---------------- */
+  function shuffleArray(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
+  }
+
+  function letterFor(i){ return String.fromCharCode(65+i); }
+
+  function fmtTime(totalSeconds){
+    const m = Math.floor(totalSeconds/60);
+    const s = totalSeconds%60;
+    return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+  }
+
+  function escapeHtml(str){
+    return String(str)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+  }
+
+  /* ---------------- Branding ---------------- */
+  function applyBranding(){
+    document.title = SITE_CONFIG.siteName;
+    document.getElementById("brandName").textContent = SITE_CONFIG.siteName;
+    document.getElementById("homeTitle").textContent = SITE_CONFIG.homeTitle;
+    document.getElementById("homeSubtitle").textContent = SITE_CONFIG.homeSubtitle;
+    document.getElementById("footerAuthor").textContent = SITE_CONFIG.authorName;
+    document.getElementById("footerTitle").textContent = SITE_CONFIG.authorTitle;
+
+    const logoEl = document.getElementById("brandLogo");
+    if(SITE_CONFIG.logoImageUrl && SITE_CONFIG.logoImageUrl.trim()){
+      logoEl.innerHTML = `<img src="${escapeHtml(SITE_CONFIG.logoImageUrl)}" alt="logo">`;
+    } else {
+      logoEl.textContent = SITE_CONFIG.logoText || "Q";
+    }
+  }
+
+  /* ---------------- Theme ---------------- */
+  const sunIcon = `<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>`;
+  const moonIcon = `<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>`;
+
+  function setTheme(theme){
+    document.documentElement.setAttribute("data-theme", theme);
+    document.getElementById("themeIcon").innerHTML = theme === "dark" ? sunIcon : moonIcon;
+    try{ localStorage.setItem(STORAGE_THEME_KEY, theme); }catch(e){}
+  }
+  function initTheme(){
+    let saved = null;
+    try{ saved = localStorage.getItem(STORAGE_THEME_KEY); }catch(e){}
+    setTheme(saved === "dark" || saved === "light" ? saved : (SITE_CONFIG.defaultTheme === "dark" ? "dark" : "light"));
+  }
+  document.getElementById("themeToggle").addEventListener("click", ()=>{
+    const cur = document.documentElement.getAttribute("data-theme");
+    setTheme(cur === "dark" ? "light" : "dark");
+  });
+
+  /* ---------------- Screen management ---------------- */
+  function showScreen(id){
+    document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+    window.scrollTo({top:0, behavior:"instant" in window ? "instant" : "auto"});
+  }
+
+  /* ---------------- Home screen state ---------------- */
+  let selectedSections = new Set(["__FULL__"]);
+  let selectedTimerMinutes = SITE_CONFIG.defaultTimerMinutes; // number, 0 = none
+
+  const SECTION_NAMES = [...new Set(VALID_QUESTIONS.map(q => q.section || "General"))];
+
+  function buildSectionChips(){
+    const wrap = document.getElementById("sectionChips");
+    wrap.innerHTML = "";
+    const chips = [{label:"Full Bank", value:"__FULL__"}, ...SECTION_NAMES.map(name=>({label:name, value:name}))];
+    chips.forEach(c=>{
+      const el = document.createElement("div");
+      el.className = "chip" + (selectedSections.has(c.value) ? " active":"");
+      el.textContent = c.label;
+      el.addEventListener("click", ()=>{
+        if(c.value === "__FULL__"){
+          selectedSections.clear();
+          selectedSections.add("__FULL__");
+        }else{
+          selectedSections.delete("__FULL__");
+          if(selectedSections.has(c.value)) selectedSections.delete(c.value);
+          else selectedSections.add(c.value);
+          if(selectedSections.size === 0) selectedSections.add("__FULL__");
+        }
+        buildSectionChips();
+        updateSectionHint();
+        renderBankList();
+      });
+      wrap.appendChild(el);
+    });
+  }
+
+  function updateSectionHint(){
+    const hint = document.getElementById("sectionHint");
+    if(selectedSections.has("__FULL__")) hint.textContent = `Full Bank selected — ${VALID_QUESTIONS.length} questions available.`;
+    else {
+      const count = VALID_QUESTIONS.filter(q=>selectedSections.has(q.section || "General")).length;
+      hint.textContent = `${selectedSections.size} section${selectedSections.size===1?"":"s"} selected — ${count} question${count===1?"":"s"} available.`;
+    }
+  }
+
+  function buildTimerChips(){
+    const wrap = document.getElementById("timerChips");
+    wrap.innerHTML = "";
+    SITE_CONFIG.timerOptionsMinutes.forEach(min=>{
+      const el = document.createElement("div");
+      el.className = "chip" + (selectedTimerMinutes===min ? " active":"");
+      el.textContent = min===0 ? "No Timer" : (min+" Min");
+      el.addEventListener("click", ()=>{
+        selectedTimerMinutes = min;
+        buildTimerChips();
+      });
+      wrap.appendChild(el);
+    });
+  }
+
+  function updateBankStat(){
+    document.getElementById("bankStat").textContent =
+      VALID_QUESTIONS.length + (VALID_QUESTIONS.length===1 ? " question loaded" : " questions loaded");
+  }
+
+  /* ---------------- Bank review list (with search) ---------------- */
+  const searchInput = document.getElementById("searchInput");
+  const searchResults = document.getElementById("searchResults");
+  const BANK_LIST_LIMIT = 300;
+
+  function renderBankList(){
+    const q = searchInput.value.trim().toLowerCase();
+    const sectionQuestions = selectedSections.has("__FULL__")
+      ? VALID_QUESTIONS
+      : VALID_QUESTIONS.filter(item=>selectedSections.has(item.section || "General"));
+    const matches = q
+      ? sectionQuestions.filter(item=>item.question.toLowerCase().includes(q))
+      : sectionQuestions;
+    searchResults.innerHTML = "";
+
+    if(matches.length === 0){
+      searchResults.innerHTML = `<div class="search-empty">No matching questions found.</div>`;
+    } else {
+      const capped = matches.slice(0, BANK_LIST_LIMIT);
+      capped.forEach((item, index)=>{
+        const box = document.createElement("div");
+        box.className = "bank-item";
+
+        const header = document.createElement("div");
+        header.className = "bank-item-header";
+        const number = document.createElement("span");
+        number.className = "question-number";
+        number.textContent = String(index + 1);
+        number.setAttribute("aria-label", `Question ${index + 1}`);
+        const questionLabel = document.createElement("span");
+        questionLabel.className = "bank-item-text";
+        questionLabel.innerHTML = `<small style="display:block;opacity:.65;margin-bottom:3px;">${escapeHtml(item.section || "General")}</small>${escapeHtml(item.question)}`;
+        header.appendChild(number);
+        header.appendChild(questionLabel);
+
+        const optsWrap = document.createElement("div");
+        optsWrap.className = "options-list";
+        item.options.forEach((opt, oi)=>{
+          const optDiv = document.createElement("div");
+          optDiv.className = "option-btn" + (oi===item.correctIndex ? " review-option correct" : "");
+          optDiv.innerHTML = `<span class="letter">${letterFor(oi)}</span><span>${escapeHtml(opt)}</span>` +
+            (oi===item.correctIndex ? `<span class="review-tag correct">Correct</span>` : "");
+          optsWrap.appendChild(optDiv);
+        });
+
+        box.appendChild(header);
+        box.appendChild(optsWrap);
+        searchResults.appendChild(box);
+      });
+      if(matches.length > BANK_LIST_LIMIT){
+        const note = document.createElement("div");
+        note.className = "hint";
+        note.style.textAlign = "center";
+        note.textContent = `Showing first ${BANK_LIST_LIMIT} of ${matches.length} matches — refine your search to see more.`;
+        searchResults.appendChild(note);
+      }
+    }
+  }
+  searchInput.addEventListener("input", renderBankList);
+
+  /* ---------------- Toggles ---------------- */
+  const toggleShuffleQ = document.getElementById("toggleShuffleQ");
+  const toggleShuffleA = document.getElementById("toggleShuffleA");
+  toggleShuffleQ.checked = SITE_CONFIG.defaultShuffleQuestions;
+  toggleShuffleA.checked = SITE_CONFIG.defaultShuffleAnswers;
+
+  /* ---------------- Session (quiz state) ---------------- */
+  let session = null;
+  /*
+    session = {
+      questions: [{id, question, options, correctIndex}, ...],
+      answers: { [index]: chosenOptionIndex },
+      current: 0,
+      timerTotalSeconds: number or null,
+      timeRemaining: number or null,
+      startedAt: timestamp,
+      finished: bool
+    }
+  */
+  let timerHandle = null;
+
+  function persistSession(){
+    if(!session) return;
+    try{ localStorage.setItem(STORAGE_SESSION_KEY, JSON.stringify(session)); }catch(e){}
+  }
+  function clearPersistedSession(){
+    try{ localStorage.removeItem(STORAGE_SESSION_KEY); }catch(e){}
+  }
+  function loadPersistedSession(){
+    try{
+      const raw = localStorage.getItem(STORAGE_SESSION_KEY);
+      if(!raw) return null;
+      const parsed = JSON.parse(raw);
+      if(parsed && Array.isArray(parsed.questions) && parsed.questions.length>0 && !parsed.finished){
+        return parsed;
+      }
+    }catch(e){}
+    return null;
+  }
+
+  function checkResumeAvailable(){
+    const prev = loadPersistedSession();
+    if(prev){
+      document.getElementById("resumeBanner").style.display = "block";
+      document.getElementById("btnResume").onclick = ()=>{
+        session = prev;
+        enterQuizScreen();
+      };
+      document.getElementById("btnDiscardResume").onclick = ()=>{
+        clearPersistedSession();
+        document.getElementById("resumeBanner").style.display = "none";
+      };
+    } else {
+      document.getElementById("resumeBanner").style.display = "none";
+    }
+  }
+
+  function buildSessionQuestions(){
+    let pool;
+
+    if(selectedSections.has("__FULL__")){
+      pool = VALID_QUESTIONS.slice();
+    }else{
+      pool = VALID_QUESTIONS.filter(q=>selectedSections.has(q.section || "General"));
+    }
+
+    if(toggleShuffleQ.checked) pool = shuffleArray(pool);
+
+    // Deep-copy + optionally shuffle answers, preserving correctness
+    return pool.map(q=>{
+      let options = q.options.slice();
+      let correctIndex = q.correctIndex;
+      if(toggleShuffleA.checked){
+        const order = shuffleArray(options.map((_,i)=>i)); // new order of original indices
+        const newOptions = order.map(i=>options[i]);
+        const newCorrect = order.indexOf(q.correctIndex);
+        options = newOptions;
+        correctIndex = newCorrect;
+      }
+      return { id:q.id, question:q.question, options, correctIndex };
+    });
+  }
+
+  document.getElementById("btnStart").addEventListener("click", ()=>{
+    if(VALID_QUESTIONS.length===0){
+      alert("The question bank is empty. Add questions to QUESTION_BANK_TEXT in the code first.");
+      return;
+    }
+    const questions = buildSessionQuestions();
+    if(questions.length===0){
+      alert("No questions available to start a quiz. Try clearing your selection.");
+      return;
+    }
+    let timerTotalSeconds = null;
+    if(selectedTimerMinutes && selectedTimerMinutes>0){
+      timerTotalSeconds = Math.round(selectedTimerMinutes*60);
+    }
+    session = {
+      questions,
+      answers: {},
+      current: 0,
+      timerTotalSeconds,
+      timeRemaining: timerTotalSeconds,
+      startedAt: Date.now(),
+      finished: false
+    };
+    persistSession();
+    enterQuizScreen();
+  });
+
+  /* ---------------- Quiz screen rendering ---------------- */
+  function enterQuizScreen(){
+    showScreen("screen-quiz");
+    startTimerIfNeeded();
+    renderQuestion();
+  }
+
+  function startTimerIfNeeded(){
+    if(timerHandle){ clearInterval(timerHandle); timerHandle = null; }
+    const pill = document.getElementById("timerPill");
+    if(session.timerTotalSeconds === null || session.timerTotalSeconds === undefined){
+      pill.style.display = "none";
+      return;
+    }
+    pill.style.display = "flex";
+    updateTimerDisplay();
+    timerHandle = setInterval(()=>{
+      if(!session || session.finished){ clearInterval(timerHandle); return; }
+      session.timeRemaining = Math.max(0, (session.timeRemaining||0) - 1);
+      updateTimerDisplay();
+      persistSession();
+      if(session.timeRemaining<=0){
+        clearInterval(timerHandle);
+        finishQuiz();
+      }
+    },1000);
+  }
+  function updateTimerDisplay(){
+    const el = document.getElementById("timerText");
+    const pill = document.getElementById("timerPill");
+    if(session.timeRemaining===null || session.timeRemaining===undefined) return;
+    el.textContent = fmtTime(session.timeRemaining);
+    pill.classList.toggle("low", session.timeRemaining<=60);
+  }
+
+  function renderQuestion(){
+    const q = session.questions[session.current];
+    document.getElementById("qCounter").textContent = `Question ${session.current+1} of ${session.questions.length}`;
+    document.getElementById("progressFill").style.width = (((session.current)/session.questions.length)*100)+"%";
+    document.getElementById("questionText").textContent = q.question;
+
+    const chosen = session.answers[session.current];
+    const answered = chosen !== undefined;
+
+    const list = document.getElementById("optionsList");
+    list.innerHTML = "";
+    q.options.forEach((opt, i)=>{
+      const btn = document.createElement("button");
+      btn.type = "button";
+      let cls = "option-btn";
+      if(answered){
+        if(i === q.correctIndex) cls += " review-option correct";
+        else if(i === chosen) cls += " review-option wrong";
+      }
+      btn.className = cls;
+      let tag = "";
+      if(answered && i === q.correctIndex) tag = `<span class="review-tag correct">Correct</span>`;
+      else if(answered && i === chosen) tag = `<span class="review-tag wrong">Your answer</span>`;
+      btn.innerHTML = `<span class="letter">${letterFor(i)}</span><span>${escapeHtml(opt)}</span>${tag}`;
+      if(answered){
+        btn.disabled = true;
+      } else {
+        btn.addEventListener("click", ()=>{
+          session.answers[session.current] = i;
+          persistSession();
+          renderQuestion();
+        });
+      }
+      list.appendChild(btn);
+    });
+
+    const feedback = document.getElementById("feedbackBanner");
+    if(answered){
+      const isCorrect = chosen === q.correctIndex;
+      feedback.style.display = "block";
+      feedback.className = "feedback-banner " + (isCorrect ? "correct" : "wrong");
+      feedback.textContent = isCorrect
+        ? "✓ Correct!"
+        : `✗ Incorrect — the correct answer is ${letterFor(q.correctIndex)}. ${q.options[q.correctIndex]}`;
+    } else {
+      feedback.style.display = "none";
+    }
+
+    document.getElementById("btnPrev").disabled = session.current===0;
+    const isLast = session.current === session.questions.length-1;
+    document.getElementById("btnNext").textContent = isLast ? "Finish Quiz" : "Next Question";
+
+    renderNavigator();
+  }
+
+  function renderNavigator(){
+    const nav = document.getElementById("navigator");
+    nav.innerHTML = "";
+    session.questions.forEach((_, i)=>{
+      const dot = document.createElement("div");
+      dot.className = "nav-dot" +
+        (session.answers[i]!==undefined ? " answered":"") +
+        (i===session.current ? " current":"");
+      dot.textContent = i+1;
+      dot.addEventListener("click", ()=>{
+        session.current = i;
+        renderQuestion();
+      });
+      nav.appendChild(dot);
+    });
+  }
+
+  document.getElementById("btnPrev").addEventListener("click", ()=>{
+    if(session.current>0){ session.current--; renderQuestion(); }
+  });
+  document.getElementById("btnNext").addEventListener("click", ()=>{
+    if(session.current < session.questions.length-1){
+      session.current++;
+      renderQuestion();
+    } else {
+      finishQuiz();
+    }
+  });
+
+  /* ---------------- Finish / results ---------------- */
+  function finishQuiz(){
+    if(timerHandle){ clearInterval(timerHandle); timerHandle = null; }
+    session.finished = true;
+    clearPersistedSession();
+
+    let correct=0, wrong=0, unanswered=0;
+    session.questions.forEach((q,i)=>{
+      const a = session.answers[i];
+      if(a===undefined) unanswered++;
+      else if(a===q.correctIndex) correct++;
+      else wrong++;
+    });
+    const total = session.questions.length;
+    const pct = total>0 ? Math.round((correct/total)*100) : 0;
+
+    document.getElementById("scorePct").textContent = pct+"%";
+    document.getElementById("scoreFrac").textContent = `${correct} / ${total}`;
+    document.getElementById("statCorrect").textContent = correct;
+    document.getElementById("statWrong").textContent = wrong;
+    document.getElementById("statUnanswered").textContent = unanswered;
+
+    const circumference = 2*Math.PI*74;
+    const ring = document.getElementById("ringProgress");
+    ring.setAttribute("stroke-dasharray", circumference.toFixed(2));
+    ring.setAttribute("stroke-dashoffset", (circumference*(1-pct/100)).toFixed(2));
+    ring.style.stroke = pct>=70 ? "var(--accent)" : (pct>=40 ? "var(--warn)" : "var(--danger)");
+
+    showScreen("screen-result");
+  }
+
+  document.getElementById("btnReview").addEventListener("click", renderReview);
+  document.getElementById("btnBackToResult").addEventListener("click", ()=>showScreen("screen-result"));
+
+  function renderReview(){
+    const wrap = document.getElementById("reviewList");
+    wrap.innerHTML = "";
+    session.questions.forEach((q,i)=>{
+      const userAns = session.answers[i];
+      const box = document.createElement("div");
+      box.className = "card";
+      box.style.margin = "0 0 12px 0";
+      box.style.padding = "16px";
+
+      let statusTag = "";
+      if(userAns===undefined) statusTag = `<span class="review-tag" style="color:var(--warn)">Unanswered</span>`;
+      else if(userAns===q.correctIndex) statusTag = `<span class="review-tag correct">Correct</span>`;
+      else statusTag = `<span class="review-tag wrong">Wrong</span>`;
+
+      let optionsHtml = "";
+      q.options.forEach((opt,oi)=>{
+        let cls = "option-btn review-option";
+        if(oi===q.correctIndex) cls+=" correct";
+        else if(oi===userAns) cls+=" wrong";
+        let tag = "";
+        if(oi===q.correctIndex) tag = `<span class="review-tag correct">Correct</span>`;
+        else if(oi===userAns) tag = `<span class="review-tag wrong">Your answer</span>`;
+        optionsHtml += `<div class="${cls}"><span class="letter">${letterFor(oi)}</span><span>${escapeHtml(opt)}</span>${tag}</div>`;
+      });
+
+      box.innerHTML = `
+        <div style="display:flex;justify-content:space-between;gap:10px;margin-bottom:10px;">
+          <div style="font-weight:700;">Q${i+1}. ${escapeHtml(q.question)}</div>
+          ${statusTag}
+        </div>
+        <div class="options-list">${optionsHtml}</div>
+      `;
+      wrap.appendChild(box);
+    });
+    showScreen("screen-review");
+  }
+
+  document.getElementById("btnRetry").addEventListener("click", ()=>{
+    // Same settings, fresh attempt
+    const questions = buildSessionQuestions();
+    if(questions.length===0){ showScreen("screen-home"); return; }
+    session = {
+      questions,
+      answers: {},
+      current: 0,
+      timerTotalSeconds: session.timerTotalSeconds,
+      timeRemaining: session.timerTotalSeconds,
+      startedAt: Date.now(),
+      finished: false
+    };
+    persistSession();
+    enterQuizScreen();
+  });
+
+  document.getElementById("btnHome").addEventListener("click", ()=>{
+    clearPersistedSession();
+    checkResumeAvailable();
+    showScreen("screen-home");
+  });
+
+  /* Warn before leaving mid-quiz */
+  window.addEventListener("beforeunload", (e)=>{
+    if(session && !session.finished && document.getElementById("screen-quiz").classList.contains("active")){
+      e.preventDefault();
+      e.returnValue = "";
+    }
+  });
+
+  /* ---------------- Init ---------------- */
+  applyBranding();
+  initTheme();
+  updateBankStat();
+  buildSectionChips();
+  updateSectionHint();
+  buildTimerChips();
+  renderBankList();
+  checkResumeAvailable();
+
+})();
+</script>
+</body>
+</html>
